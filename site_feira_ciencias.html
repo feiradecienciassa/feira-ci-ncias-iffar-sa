@@ -881,56 +881,7 @@ footer a { color: var(--verde-claro); text-decoration: none; }
 </footer>
 <!-- SCROLL TOP -->
 <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
-<!-- MODAL ANAIS -->
-<div class="modal-overlay" id="modal-anais" onclick="fecharModalAnais(event)">
-<div class="modal-box" style="position:relative">
-<button class="modal-close-btn" onclick="fecharModalAnais()">✕</button>
-<h3 id="modal-titulo">➕ Adicionar Trabalho aos Anais</h3>
-<input id="modal-edit-id" type="hidden" value=""/>
-<div class="modal-form-group">
-<label>Título do Trabalho *</label>
-<input id="m-titulo" placeholder="Título completo do trabalho" type="text"/>
-</div>
-<div class="modal-form-group">
-<label>Autores *</label>
-<input id="m-autores" placeholder="Nome dos autores separados por vírgula" type="text"/>
-</div>
-<div class="modal-form-group">
-<label>Orientador(a)</label>
-<input id="m-orientador" placeholder="Nome do professor orientador" type="text"/>
-</div>
-<div class="modal-form-group">
-<label>Categoria *</label>
-<select id="m-categoria">
-<option value="">Selecione...</option>
-<option value="Ensino Fundamental">📚 Ensino Fundamental</option>
-<option value="Ensino Médio">🎓 Ensino Médio</option>
-<option value="Ensino Superior">🏛️ Ensino Superior</option>
-</select>
-</div>
-<div class="modal-form-group">
-<label>Resumo do Trabalho</label>
-<textarea id="m-resumo" placeholder="Breve descrição do projeto..." rows="4"></textarea>
-</div>
-<div class="modal-form-group">
-<label>Código / Número do Trabalho</label>
-<input id="m-codigo" placeholder="Ex: 001, A-12..." type="text"/>
-</div>
-<div class="modal-form-group">
-<label>📎 Arquivo do Resumo (PDF ou DOCX)</label>
-<input type="file" id="m-arquivo" accept=".pdf,.doc,.docx" style="padding:8px 14px;border:1.5px solid var(--borda);border-radius:8px;font-size:0.88rem;font-family:inherit;cursor:pointer;width:100%;">
-<small style="color:#888;font-size:0.75rem;margin-top:4px;display:block;">Formatos aceitos: PDF, DOC, DOCX (máx. 10MB)</small>
-<div id="m-arquivo-atual" style="display:none;margin-top:8px;padding:8px 12px;background:#f0faf5;border-radius:8px;font-size:0.82rem;color:var(--verde);border:1px solid #c8e6c9;">
-  📄 <span id="m-arquivo-nome"></span>
-  <button onclick="removerArquivo()" style="background:none;border:none;color:#c0392b;cursor:pointer;font-size:0.8rem;margin-left:8px;">✕ Remover</button>
-</div>
-</div>
-<div class="modal-btns">
-<button class="modal-btn-save" onclick="salvarTrabalho()">💾 Salvar Trabalho</button>
-<button class="modal-btn-cancel" onclick="fecharModalAnais()">Cancelar</button>
-</div>
-</div>
-</div>
+
 <script>
 // ── DADOS ──
 let trabalhos = JSON.parse(localStorage.getItem('feira_anais') || '[]');
@@ -1001,10 +952,7 @@ function renderAnais(){
       <td>${t.orientador||'—'}</td>
       <td><span class="cat-tag ${catClass[t.categoria]||''}">${t.categoria}</span></td>
       <td>${t.resumo ? `<span title="${t.resumo}" style="cursor:help;color:var(--verde)">📄 Ver</span>` : '—'}</td>
-      <td>
-        <button onclick="editarTrabalho('${t.id}')" style="background:none;border:none;cursor:pointer;font-size:1rem;margin-right:4px" title="Editar">✏️</button>
-        <button onclick="excluirTrabalho('${t.id}')" style="background:none;border:none;cursor:pointer;font-size:1rem" title="Excluir">🗑️</button>
-      </td>
+      
     </tr>
   `).join('');
 }

@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Administração dos Anais – IV Feira de Ciências IFFar</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&amp;family=Open+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --verde: #1a7a4a;
+  --verde-claro: #2ecc71;
+  --verde-escuro: #145c38;
+  --azul: #1a5276;
+  --vermelho: #c0392b;
+  --cinza-bg: #f4f6f8;
+  --borda: #dce3ea;
+  --sombra: 0 4px 18px rgba(0,0,0,0.09);
+  --texto: #2c3e50;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Open Sans', sans-serif; background: var(--cinza-bg); color: var(--texto); min-height: 100vh; }
+
+/* ── LOGIN ── */
+.login-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: linear-gradient(135deg, var(--verde-escuro), var(--azul));
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.login-box {
+  background: #fff; border-radius: 20px; padding: 40px 36px;
+  max-width: 420px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  text-align: center;
+}
+.login-icon { font-size: 3rem; margin-bottom: 16px; }
+.login-box h2 { font-family: 'Poppins', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--verde-escuro); margin-bottom: 6px; }
+.login-box p { font-size: 0.88rem; color: #777; margin-bottom: 28px; }
+.login-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; text-align: left; }
+.login-group label { font-size: 0.82rem; font-weight: 600; color: #444; }
+.login-group input {
+  padding: 12px 16px; border: 1.5px solid var(--borda); border-radius: 10px;
+  font-size: 0.95rem; font-family: inherit; outline: none; transition: border-color 0.2s;
+}
+.login-group input:focus { border-color: var(--verde); box-shadow: 0 0 0 3px rgba(26,122,74,0.12); }
+.login-btn {
+  width: 100%; padding: 14px; background: var(--verde); color: #fff;
+  border: none; border-radius: 10px; font-size: 1rem; font-weight: 700;
+  cursor: pointer; font-family: inherit; transition: all 0.2s; margin-top: 8px;
+}
+.login-btn:hover { background: var(--verde-escuro); transform: translateY(-1px); }
+.login-error {
+  display: none; background: #fce4ec; color: var(--vermelho);
+  border-radius: 8px; padding: 10px 14px; font-size: 0.85rem;
+  font-weight: 600; margin-top: 12px;
+}
+.login-error.show { display: block; }
+
+/* ── HEADER ── */
+header {
+  background: linear-gradient(135deg, var(--verde-escuro), var(--azul));
+  color: #fff; padding: 0; box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+}
+.header-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 24px; gap: 16px;
+}
+.header-brand { display: flex; align-items: center; gap: 12px; }
+.header-brand .icon { font-size: 1.8rem; }
+.header-brand h1 { font-family: 'Poppins', sans-serif; font-size: 1.1rem; font-weight: 700; }
+.header-brand p { font-size: 0.78rem; opacity: 0.8; }
+.header-actions { display: flex; align-items: center; gap: 12px; }
+.btn-logout {
+  background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 8px; padding: 8px 16px; font-size: 0.82rem; font-weight: 600;
+  cursor: pointer; font-family: inherit; transition: all 0.2s;
+}
+.btn-logout:hover { background: rgba(255,255,255,0.25); }
+.admin-badge {
+  background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 20px; padding: 6px 14px; font-size: 0.78rem; font-weight: 600;
+}
+
+/* ── CONTAINER ── */
+.container { max-width: 1200px; margin: 0 auto; padding: 32px 20px 60px; }
+
+/* ── STATS ── */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px; }
+.stat-card {
+  background: #fff; border-radius: 14px; padding: 20px 22px;
+  border: 1px solid var(--borda); box-shadow: var(--sombra); text-align: center;
+}
+.stat-card .sv { font-family: 'Poppins', sans-serif; font-size: 2rem; font-weight: 800; color: var(--verde); }
+.stat-card .sl { font-size: 0.8rem; color: #777; margin-top: 4px; }
+
+/* ── CARD ── */
+.card {
+  background: #fff; border-radius: 14px; box-shadow: var(--sombra);
+  padding: 28px 32px; margin-bottom: 24px; border: 1px solid var(--borda);
+}
+.card-title {
+  font-family: 'Poppins', sans-serif; font-size: 1.1rem; font-weight: 700;
+  color: var(--verde-escuro); margin-bottom: 20px; display: flex;
+  align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+
+/* ── FILTROS ── */
+.filtros-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; align-items: center; }
+.filtro-btn {
+  padding: 8px 18px; border-radius: 30px; border: 2px solid var(--borda);
+  background: #fff; font-size: 0.83rem; font-weight: 600; cursor: pointer;
+  transition: all 0.2s; color: #666; font-family: inherit;
+}
+.filtro-btn:hover { border-color: var(--verde); color: var(--verde); }
+.filtro-btn.active { background: var(--verde); color: #fff; border-color: var(--verde); }
+.search-input {
+  flex: 1; min-width: 200px; padding: 10px 16px; border: 1.5px solid var(--borda);
+  border-radius: 10px; font-size: 0.88rem; font-family: inherit; outline: none;
+  transition: border-color 0.2s;
+}
+.search-input:focus { border-color: var(--verde); }
+
+/* ── BOTÃO ADICIONAR ── */
+.btn-add {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--verde); color: #fff; border: none; border-radius: 10px;
+  padding: 11px 22px; font-size: 0.9rem; font-weight: 700; cursor: pointer;
+  font-family: inherit; transition: all 0.2s; box-shadow: 0 4px 14px rgba(26,122,74,0.3);
+}
+.btn-add:hover { background: var(--verde-escuro); transform: translateY(-1px); }
+
+/* ── TABELA ── */
+.table-wrap { border-radius: 12px; overflow: hidden; border: 1px solid var(--borda); overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; min-width: 700px; }
+thead tr { background: var(--verde); color: #fff; }
+th { padding: 13px 16px; text-align: left; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+td { padding: 13px 16px; font-size: 0.87rem; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #f8fffe; }
+.cat-tag { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; white-space: nowrap; }
+.cat-fund { background: #e8f5e9; color: #2e7d32; }
+.cat-medio { background: #e3f2fd; color: #1565c0; }
+.cat-sup { background: #fce4ec; color: #880e4f; }
+.empty-row { text-align: center; padding: 48px; color: #aaa; font-size: 0.95rem; }
+.count-info { font-size: 0.83rem; color: #888; margin-bottom: 12px; }
+
+/* ── AÇÕES ── */
+.btn-acao {
+  background: none; border: none; cursor: pointer; font-size: 1rem;
+  padding: 4px 6px; border-radius: 6px; transition: background 0.15s;
+}
+.btn-acao:hover { background: #f0f0f0; }
+.btn-acao.editar { color: var(--azul); }
+.btn-acao.excluir { color: var(--vermelho); }
+
+/* ── MODAL ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  z-index: 2000; align-items: center; justify-content: center; padding: 20px;
+}
+.modal-overlay.show { display: flex; }
+.modal-box {
+  background: #fff; border-radius: 20px; padding: 32px 36px;
+  max-width: 580px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  max-height: 90vh; overflow-y: auto; position: relative;
+}
+.modal-box h3 { font-family: 'Poppins', sans-serif; font-size: 1.2rem; font-weight: 700; color: var(--verde-escuro); margin-bottom: 20px; }
+.modal-close { position: absolute; top: 16px; right: 20px; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #aaa; }
+.modal-close:hover { color: #555; }
+.form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.form-group label { font-size: 0.82rem; font-weight: 600; color: #444; }
+.form-group input, .form-group select, .form-group textarea {
+  padding: 10px 14px; border: 1.5px solid var(--borda); border-radius: 8px;
+  font-size: 0.9rem; font-family: inherit; outline: none; transition: border-color 0.2s;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  border-color: var(--verde); box-shadow: 0 0 0 3px rgba(26,122,74,0.1);
+}
+.form-group textarea { resize: vertical; min-height: 80px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media(max-width:560px){ .form-row { grid-template-columns: 1fr; } }
+.modal-btns { display: flex; gap: 12px; margin-top: 20px; }
+.btn-salvar {
+  flex: 1; background: var(--verde); color: #fff; border: none; border-radius: 10px;
+  padding: 12px; font-size: 0.9rem; font-weight: 700; cursor: pointer; font-family: inherit;
+  transition: all 0.2s;
+}
+.btn-salvar:hover { background: var(--verde-escuro); }
+.btn-cancelar {
+  flex: 1; background: #f0f0f0; color: #555; border: none; border-radius: 10px;
+  padding: 12px; font-size: 0.9rem; font-weight: 600; cursor: pointer; font-family: inherit;
+}
+.btn-cancelar:hover { background: #e0e0e0; }
+
+/* ── ARQUIVO ── */
+.arquivo-info {
+  display: none; background: #f0faf5; border: 1px solid #c8e6c9;
+  border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; color: var(--verde);
+  margin-top: 6px; align-items: center; gap: 8px;
+}
+.arquivo-info.show { display: flex; }
+.btn-remover-arq {
+  background: none; border: none; color: var(--vermelho); cursor: pointer;
+  font-size: 0.8rem; margin-left: auto;
+}
+
+/* ── TOAST ── */
+#toast {
+  display: none; position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+  background: var(--verde); color: #fff; padding: 14px 28px; border-radius: 12px;
+  font-size: 0.92rem; font-weight: 600; z-index: 3000;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.2); max-width: 90vw; text-align: center;
+}
+
+/* ── EXPORTAR ── */
+.btn-exportar {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--azul); color: #fff; border: none; border-radius: 10px;
+  padding: 10px 20px; font-size: 0.85rem; font-weight: 700; cursor: pointer;
+  font-family: inherit; transition: all 0.2s;
+}
+.btn-exportar:hover { background: #1a4a6e; }
+
+/* ── LINK SITE ── */
+.link-site {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--verde); font-size: 0.82rem; text-decoration: none; font-weight: 600;
+}
+.link-site:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<!-- LOGIN -->
+<div class="login-overlay" id="loginOverlay">
+<div class="login-box">
+<div class="login-icon">🔐</div>
+<h2>Área da Comissão Organizadora</h2>
+<p>IV Feira de Ciências – IFFar Campus Santo Augusto<br/>Digite a senha para acessar o painel de administração dos anais.</p>
+<div class="login-group">
+<label>Usuário</label>
+<input autocomplete="username" id="login-user" placeholder="comissao" type="text"/>
+</div>
+<div class="login-group">
+<label>Senha</label>
+<input autocomplete="current-password" id="login-senha" onkeydown="if(event.key==='Enter') fazerLogin()" placeholder="••••••••" type="password"/>
+</div>
+<button class="login-btn" onclick="fazerLogin()">🔓 Entrar</button>
+<div class="login-error" id="login-error">❌ Usuário ou senha incorretos. Tente novamente.</div>
+</div>
+</div>
+<!-- HEADER -->
+<header>
+<div class="header-inner">
+<div class="header-brand">
+<div class="icon">🔬</div>
+<div>
+<h1>Painel de Administração – Anais</h1>
+<p>IV Feira de Ciências · IFFar Campus Santo Augusto</p>
+</div>
+</div>
+<div class="header-actions">
+<span class="admin-badge">👤 Comissão Organizadora</span>
+<button class="btn-logout" onclick="fazerLogout()">🚪 Sair</button>
+</div>
+</div>
+</header>
+<div class="container">
+<!-- STATS -->
+<div class="stats-grid">
+<div class="stat-card"><div class="sv" id="stat-total">0</div><div class="sl">Total de Trabalhos</div></div>
+<div class="stat-card"><div class="sv" id="stat-fund">0</div><div class="sl">Ensino Fundamental</div></div>
+<div class="stat-card"><div class="sv" id="stat-medio">0</div><div class="sl">Ensino Médio</div></div>
+<div class="stat-card"><div class="sv" id="stat-sup">0</div><div class="sl">Ensino Superior</div></div>
+<div class="stat-card"><div class="sv" id="stat-arquivos">0</div><div class="sl">Com Arquivo Anexado</div></div>
+</div>
+<!-- GERENCIAR ANAIS -->
+<div class="card">
+<div class="card-title">
+<span>📚 Gerenciar Trabalhos dos Anais</span>
+<div style="display:flex;gap:10px;flex-wrap:wrap;">
+<button class="btn-exportar" onclick="exportarCSV()">📊 Exportar CSV</button>
+<button class="btn-add" onclick="abrirModal()">➕ Adicionar Trabalho</button>
+</div>
+</div>
+<div class="filtros-bar">
+<input class="search-input" id="busca" oninput="renderTabela()" placeholder="🔍 Buscar por título, autor ou orientador..." type="text"/>
+<button class="filtro-btn active" onclick="setFiltro('todos',this)">📋 Todos</button>
+<button class="filtro-btn" onclick="setFiltro('Ensino Fundamental',this)">📚 Fundamental</button>
+<button class="filtro-btn" onclick="setFiltro('Ensino Médio',this)">🎓 Médio</button>
+<button class="filtro-btn" onclick="setFiltro('Ensino Superior',this)">🏛️ Superior</button>
+</div>
+<div class="count-info" id="count-info">Nenhum trabalho cadastrado.</div>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Título do Trabalho</th>
+<th>Autores</th>
+<th>Orientador(a)</th>
+<th>Categoria</th>
+<th>Arquivo</th>
+<th>Ações</th>
+</tr>
+</thead>
+<tbody id="tabela-body">
+<tr><td class="empty-row" colspan="7">📭 Nenhum trabalho cadastrado ainda.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- LINK SITE PÚBLICO -->
+<div style="text-align:center;margin-top:8px;">
+<a class="link-site" href="site_feira_ciencias.html" target="_blank">🌐 Ver site público da Feira</a>
+</div>
+</div>
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="fecharModal(event)">
+<div class="modal-box">
+<button class="modal-close" onclick="fecharModal()">✕</button>
+<h3 id="modal-titulo">➕ Adicionar Trabalho</h3>
+<input id="edit-id" type="hidden"/>
+<div class="form-group">
+<label>📌 Título do Trabalho *</label>
+<input id="f-titulo" placeholder="Título completo do trabalho" style="font-weight:600;border-color:var(--verde);background:#f0faf5;" type="text"/>
+</div>
+<div class="form-row">
+<div class="form-group">
+<label>Código / Nº do Trabalho</label>
+<input id="f-codigo" placeholder="Ex: 001, A-12..." type="text"/>
+</div>
+<div class="form-group">
+<label>Categoria *</label>
+<select id="f-categoria">
+<option value="">Selecione...</option>
+<option value="Ensino Fundamental">📚 Ensino Fundamental</option>
+<option value="Ensino Médio">🎓 Ensino Médio</option>
+<option value="Ensino Superior">🏛️ Ensino Superior</option>
+</select>
+</div>
+</div>
+<div class="form-group">
+<label>Autores *</label>
+<input id="f-autores" placeholder="Nome dos autores separados por vírgula" type="text"/>
+</div>
+<div class="form-group">
+<label>Orientador(a)</label>
+<input id="f-orientador" placeholder="Nome do professor orientador" type="text"/>
+</div>
+<div class="form-group">
+<label>Resumo do Trabalho</label>
+<textarea id="f-resumo" placeholder="Breve descrição do projeto..." rows="4"></textarea>
+</div>
+<div class="form-group">
+<label>📎 Arquivo do Resumo (PDF ou DOCX, máx. 10MB)</label>
+<input accept=".pdf,.doc,.docx" id="f-arquivo" style="padding:8px 14px;border:1.5px solid var(--borda);border-radius:8px;font-size:0.88rem;font-family:inherit;cursor:pointer;width:100%;" type="file"/>
+<div class="arquivo-info" id="arquivo-info">
+        📄 <span id="arquivo-nome"></span>
+<button class="btn-remover-arq" onclick="removerArquivo()">✕ Remover</button>
+</div>
+</div>
+<div class="modal-btns">
+<button class="btn-salvar" onclick="salvar()">💾 Salvar Trabalho</button>
+<button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+</div>
+</div>
+</div>
+<!-- TOAST -->
+<div id="toast"></div>
+<script>
+// ── CREDENCIAIS ──
+// ⚠️ ALTERE A SENHA ABAIXO ANTES DE PUBLICAR!
+const USUARIO = 'comissao';
+const SENHA = 'feira2026iffar';
+
+// ── LOGIN ──
+function fazerLogin() {
+  const u = document.getElementById('login-user').value.trim();
+  const s = document.getElementById('login-senha').value;
+  if (u === USUARIO && s === SENHA) {
+    sessionStorage.setItem('admin_logado', '1');
+    document.getElementById('loginOverlay').style.display = 'none';
+    renderTabela();
+    atualizarStats();
+  } else {
+    document.getElementById('login-error').classList.add('show');
+    document.getElementById('login-senha').value = '';
+    document.getElementById('login-senha').focus();
+  }
+}
+
+function fazerLogout() {
+  if (confirm('Deseja sair do painel de administração?')) {
+    sessionStorage.removeItem('admin_logado');
+    location.reload();
+  }
+}
+
+// Verificar se já está logado
+if (sessionStorage.getItem('admin_logado') === '1') {
+  document.getElementById('loginOverlay').style.display = 'none';
+}
+
+// ── DADOS ──
+let trabalhos = JSON.parse(localStorage.getItem('feira_anais') || '[]');
+let filtroAtual = 'todos';
+let editandoId = null;
+
+// ── STATS ──
+function atualizarStats() {
+  document.getElementById('stat-total').textContent = trabalhos.length;
+  document.getElementById('stat-fund').textContent = trabalhos.filter(t=>t.categoria==='Ensino Fundamental').length;
+  document.getElementById('stat-medio').textContent = trabalhos.filter(t=>t.categoria==='Ensino Médio').length;
+  document.getElementById('stat-sup').textContent = trabalhos.filter(t=>t.categoria==='Ensino Superior').length;
+  document.getElementById('stat-arquivos').textContent = trabalhos.filter(t=>t.arquivo).length;
+}
+
+// ── FILTRO ──
+function setFiltro(f, btn) {
+  filtroAtual = f;
+  document.querySelectorAll('.filtro-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTabela();
+}
+
+// ── TABELA ──
+function renderTabela() {
+  const busca = (document.getElementById('busca').value||'').toLowerCase();
+  let lista = trabalhos.filter(t => {
+    const matchCat = filtroAtual==='todos' || t.categoria===filtroAtual;
+    const matchBusca = !busca ||
+      t.titulo.toLowerCase().includes(busca) ||
+      t.autores.toLowerCase().includes(busca) ||
+      (t.orientador||'').toLowerCase().includes(busca);
+    return matchCat && matchBusca;
+  });
+
+  const tbody = document.getElementById('tabela-body');
+  const countInfo = document.getElementById('count-info');
+
+  if (lista.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" class="empty-row">📭 ${trabalhos.length===0?'Nenhum trabalho cadastrado ainda. Clique em "Adicionar Trabalho" para começar.':'Nenhum trabalho encontrado com esses filtros.'}</td></tr>`;
+    countInfo.textContent = trabalhos.length===0 ? 'Nenhum trabalho cadastrado.' : '0 trabalhos encontrados.';
+    return;
+  }
+
+  countInfo.textContent = `${lista.length} trabalho${lista.length!==1?'s':''} encontrado${lista.length!==1?'s':''} de ${trabalhos.length} cadastrado${trabalhos.length!==1?'s':''}.`;
+
+  const catClass = {'Ensino Fundamental':'cat-fund','Ensino Médio':'cat-medio','Ensino Superior':'cat-sup'};
+  tbody.innerHTML = lista.map((t,i) => `
+    <tr>
+      <td><strong>${t.codigo||String(i+1).padStart(3,'0')}</strong></td>
+      <td><strong>${t.titulo}</strong></td>
+      <td>${t.autores}</td>
+      <td>${t.orientador||'—'}</td>
+      <td><span class="cat-tag ${catClass[t.categoria]||''}">${t.categoria}</span></td>
+      <td>${t.arquivo
+        ? `<a href="${t.arquivo}" download="${t.arquivoNome||'resumo'}" style="color:var(--verde);font-weight:600;font-size:0.83rem;">⬇️ ${t.arquivoTipo||'Arquivo'}</a>`
+        : '<span style="color:#ccc">—</span>'}</td>
+      <td style="white-space:nowrap;">
+        <button class="btn-acao editar" onclick="editar('${t.id}')" title="Editar">✏️</button>
+        <button class="btn-acao excluir" onclick="excluir('${t.id}')" title="Excluir">🗑️</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// ── MODAL ──
+function abrirModal() {
+  editandoId = null;
+  document.getElementById('modal-titulo').textContent = '➕ Adicionar Trabalho';
+  document.getElementById('edit-id').value = '';
+  ['f-titulo','f-autores','f-orientador','f-resumo','f-codigo'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-categoria').value = '';
+  document.getElementById('f-arquivo').value = '';
+  document.getElementById('arquivo-info').classList.remove('show');
+  document.getElementById('arquivo-nome').textContent = '';
+  document.getElementById('modal').classList.add('show');
+}
+
+function fecharModal(e) {
+  if (!e || e.target === document.getElementById('modal'))
+    document.getElementById('modal').classList.remove('show');
+}
+
+function editar(id) {
+  const t = trabalhos.find(x=>x.id===id);
+  if (!t) return;
+  editandoId = id;
+  document.getElementById('modal-titulo').textContent = '✏️ Editar Trabalho';
+  document.getElementById('f-titulo').value = t.titulo;
+  document.getElementById('f-autores').value = t.autores;
+  document.getElementById('f-orientador').value = t.orientador||'';
+  document.getElementById('f-categoria').value = t.categoria;
+  document.getElementById('f-resumo').value = t.resumo||'';
+  document.getElementById('f-codigo').value = t.codigo||'';
+  document.getElementById('f-arquivo').value = '';
+  const arqInfo = document.getElementById('arquivo-info');
+  if (t.arquivo && t.arquivoNome) {
+    arqInfo.classList.add('show');
+    document.getElementById('arquivo-nome').textContent = t.arquivoNome;
+  } else {
+    arqInfo.classList.remove('show');
+  }
+  document.getElementById('modal').classList.add('show');
+}
+
+function excluir(id) {
+  const t = trabalhos.find(x=>x.id===id);
+  if (!t) return;
+  if (!confirm(`Deseja excluir o trabalho "${t.titulo}"?`)) return;
+  trabalhos = trabalhos.filter(x=>x.id!==id);
+  salvarLocal();
+  renderTabela();
+  atualizarStats();
+  showToast('🗑️ Trabalho excluído com sucesso!', '#c0392b');
+}
+
+function removerArquivo() {
+  document.getElementById('f-arquivo').value = '';
+  document.getElementById('arquivo-info').classList.remove('show');
+  document.getElementById('arquivo-nome').textContent = '';
+  if (editandoId) {
+    const t = trabalhos.find(x=>x.id===editandoId);
+    if (t) { t.arquivo = null; t.arquivoNome = null; t.arquivoTipo = null; }
+  }
+}
+
+// ── SALVAR ──
+function salvar() {
+  const titulo = document.getElementById('f-titulo').value.trim();
+  const autores = document.getElementById('f-autores').value.trim();
+  const categoria = document.getElementById('f-categoria').value;
+  if (!titulo) { showToast('⚠️ Preencha o título do trabalho.', '#c0392b'); return; }
+  if (!autores) { showToast('⚠️ Preencha os autores.', '#c0392b'); return; }
+  if (!categoria) { showToast('⚠️ Selecione a categoria.', '#c0392b'); return; }
+
+  const file = document.getElementById('f-arquivo').files[0];
+
+  const concluir = (arquivoB64, arquivoNome, arquivoTipo) => {
+    const existente = editandoId ? trabalhos.find(t=>t.id===editandoId) : null;
+    const dados = {
+      id: editandoId || Date.now().toString(),
+      titulo, autores,
+      orientador: document.getElementById('f-orientador').value.trim(),
+      categoria,
+      resumo: document.getElementById('f-resumo').value.trim(),
+      codigo: document.getElementById('f-codigo').value.trim(),
+      arquivo: arquivoB64 || (existente ? existente.arquivo : null),
+      arquivoNome: arquivoNome || (existente ? existente.arquivoNome : null),
+      arquivoTipo: arquivoTipo || (existente ? existente.arquivoTipo : null)
+    };
+    if (editandoId) {
+      const idx = trabalhos.findIndex(t=>t.id===editandoId);
+      if (idx>=0) trabalhos[idx] = dados;
+    } else {
+      trabalhos.push(dados);
+    }
+    salvarLocal();
+    renderTabela();
+    atualizarStats();
+    fecharModal();
+    showToast(editandoId ? '✅ Trabalho atualizado!' : '✅ Trabalho adicionado com sucesso!', '#1a7a4a');
+  };
+
+  if (file) {
+    if (file.size > 10*1024*1024) { showToast('⚠️ Arquivo muito grande! Máximo 10MB.', '#c0392b'); return; }
+    const ext = file.name.split('.').pop().toUpperCase();
+    const reader = new FileReader();
+    reader.onload = e => concluir(e.target.result, file.name, ext);
+    reader.readAsDataURL(file);
+  } else {
+    concluir(null, null, null);
+  }
+}
+
+// ── EXPORTAR CSV ──
+function exportarCSV() {
+  if (trabalhos.length === 0) { showToast('⚠️ Nenhum trabalho para exportar.', '#e67e22'); return; }
+  const header = ['Código','Título','Autores','Orientador','Categoria','Tem Arquivo'];
+  const rows = trabalhos.map(t => [
+    t.codigo||'', t.titulo, t.autores, t.orientador||'', t.categoria, t.arquivo?'Sim':'Não'
+  ]);
+  const csv = [header, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'anais_feira_ciencias.csv'; a.click();
+  URL.revokeObjectURL(url);
+  showToast('📊 CSV exportado com sucesso!', '#1a7a4a');
+}
+
+// ── LOCAL STORAGE ──
+function salvarLocal() {
+  localStorage.setItem('feira_anais', JSON.stringify(trabalhos));
+}
+
+// ── TOAST ──
+function showToast(msg, cor) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.background = cor||'#1a7a4a'; t.style.display = 'block';
+  setTimeout(()=>t.style.display='none', 4000);
+}
+
+// ── LISTENER ARQUIVO ──
+document.getElementById('f-arquivo').addEventListener('change', function(){
+  const file = this.files[0];
+  if (file) {
+    if (file.size > 10*1024*1024) { showToast('⚠️ Arquivo muito grande! Máximo 10MB.', '#c0392b'); this.value=''; return; }
+    document.getElementById('arquivo-info').classList.add('show');
+    document.getElementById('arquivo-nome').textContent = `${file.name} (${(file.size/1024).toFixed(0)}KB)`;
+  }
+});
+
+// ── INIT ──
+renderTabela();
+atualizarStats();
+</script>
+</body>
+</html>
